@@ -1,0 +1,46 @@
+#!/usr/bin/env python3
+"""Run YOLO vehicle detection on raw videos and save a labeled output video for inspection."""
+
+from __future__ import annotations
+
+import argparse
+from pathlib import Path
+
+from src.detection.vehicle_detector import VehicleDetector
+
+VIDEO_EXTENSIONS = {".mp4", ".avi", ".mov", ".mkv", ".wmv"}
+
+
+def iter_videos(root: Path) -> list[Path]:
+    if not root.exists():
+        return []
+    return sorted(path for path in root.rglob("*") if path.is_file() and path.suffix.lower() in VIDEO_EXTENSIONS)
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Run vehicle detection over raw videos.")
+    parser.add_argument("--input", type=str, required=True, help="Directory containing video files")
+    parser.add_argument("--output", type=str, default="data/outputs", help="Directory where labeled outputs are saved")
+    args = parser.parse_args()
+
+    detector = VehicleDetector(model_name="yolov8n.pt", confidence=0.35, iou=0.5, image_size=640, device="auto")
+    videos = iter_videos(Path(args.input))
+    output_dir = Path(args.output)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    if not videos:
+        print(f"No videos found in {args.input}")
+        return
+
+    print(f"Processing {len(videos)} video(s)...")
+    for video in videos:
+        out_path = output_dir / f"{video.stem}_detections.mp4"
+        try:
+            detections = detector.detect_video(video, output_path=out_path)
+            print(f"- {video.name}: {len(detections)} detections")
+        except Exception as exc:  # pragma: no cover - CLI resilience
+            print(f"- {video.name}: detection failed ({exc})")
+
+
+if __name__ == "__main__":
+    main()
