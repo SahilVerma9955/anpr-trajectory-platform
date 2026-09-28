@@ -1,0 +1,32 @@
+vehicle_model:
+  name: yolov8n.pt
+  confidence: 0.35
+  iou: 0.50
+  image_size: 640
+  device: auto
+  classes:
+    - "car"
+    - "motorcycle"
+    - "bus"
+    - "truck"
+    - "auto-rickshaw"
+
+plate_model:
+  enabled: false
+  path: models/plate/plate_detector.pt
+  confidence: 0.25
+  image_size: 640
+
+ocr:
+  engine: easyocr
+  languages:
+    - en
+  normalize_uppercase: true
+  confidence_threshold: 0.25
+  temporal_vote_window: 5
+
+tracking:
+  method: bytetrack
+  track_buffer: 30
+  min_hits: 3
+  max_age: 30

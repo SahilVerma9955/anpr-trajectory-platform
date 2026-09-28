@@ -1,0 +1,16 @@
+cameras:
+  camera_01:
+    latitude: 28.6139
+    longitude: 77.2090
+    orientation: 90
+    road_segment: demo-road-1
+  camera_02:
+    latitude: 28.6200
+    longitude: 77.2150
+    orientation: 180
+    road_segment: demo-road-2
+  camera_03:
+    latitude: 28.6085
+    longitude: 77.2065
+    orientation: 270
+    road_segment: demo-road-3
